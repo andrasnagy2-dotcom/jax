@@ -113,23 +113,32 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.stroke();
         }
 
-        // Körök rajzolása
+        // Körök rajzolása (a bullseye-t külön kezeljük)
         const rings = [
             { r: boardRadius, color: 'green', width: boardRadius * 0.05 }, // dupla
             { r: boardRadius * 0.6, color: 'red', width: boardRadius * 0.05 },   // tripla
-            { r: boardRadius * 0.15, color: 'green', width: boardRadius * 0.05 },  // bull
-            { r: boardRadius * 0.07, color: 'red', width: boardRadius * 0.07 },   // dupla bull
         ];
 
         rings.forEach(ring => {
              ctx.beginPath();
              ctx.arc(centerX, centerY, ring.r, 0, Math.PI * 2, false);
-             if (ring.width > 0) {
-                ctx.strokeStyle = ring.color;
-                ctx.lineWidth = ring.width;
-                ctx.stroke();
-             }
+             ctx.strokeStyle = ring.color;
+             ctx.lineWidth = ring.width;
+             ctx.stroke();
         });
+
+        // Bullseye kitöltése (a szektorok fölé rajzoljuk)
+        // Sima bull
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, boardRadius * 0.15, 0, Math.PI * 2, false);
+        ctx.fillStyle = 'green';
+        ctx.fill();
+        // Dupla bull
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, boardRadius * 0.07, 0, Math.PI * 2, false);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+
 
         // Pontszámok kiírása a táblára
         ctx.fillStyle = 'white';
@@ -137,7 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         for (let i = 0; i < 20; i++) {
-            const angle = (i / 20) * Math.PI * 2 - (Math.PI / 20) - (Math.PI / 2);
+            // A szög korrekciója, hogy a szám a szektor közepére essen
+            const angle = (i / 20) * Math.PI * 2 - (Math.PI / 2);
             const x = centerX + Math.cos(angle) * textRadius;
             const y = centerY + Math.sin(angle) * textRadius;
             ctx.fillText(sectors[i], x, y);
