@@ -1,0 +1,146 @@
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
+
+#main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#game-area {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+canvas {
+    background-color: #333;
+    border-radius: 50%;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.progress-container.vertical {
+    flex-direction: column;
+}
+
+.progress-container.horizontal {
+    flex-direction: row;
+}
+
+#vertical-progress-bar {
+    width: 30px;
+    height: 600px;
+    border: 1px solid #fff;
+    position: relative;
+    order: -1; /* A label elé helyezi */
+}
+
+#vertical-progress-value {
+    background-color: red;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
+#horizontal-progress-bar {
+    width: 600px;
+    height: 30px;
+    border: 1px solid #fff;
+    position: relative;
+}
+
+#horizontal-progress-value {
+    background-color: red;
+    height: 100%;
+    position: absolute;
+    left: 0;
+}
+
+#ui-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(51, 51, 51, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    min-width: 250px;
+}
+
+#player-setup h2, #scoreboard h2 {
+    margin-top: 0;
+}
+
+#player-inputs input {
+    display: block;
+    margin-bottom: 10px;
+    width: calc(100% - 12px); /* padding miatt */
+    padding: 5px;
+    background-color: #555;
+    border: 1px solid #777;
+    color: white;
+    border-radius: 4px;
+}
+
+.setup-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.setup-controls button {
+    width: auto;
+    margin-top: 0;
+}
+
+.setup-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#game-mode-select {
+    background-color: #555;
+    border: 1px solid #777;
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+
+button {
+    padding: 10px 15px;
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#scoreboard {
+    text-align: left;
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darts Játék</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="main-container">
+    <div id="game-area">
+        <canvas id="dartboard" width="600" height="600"></canvas>
+        <div class="progress-container vertical">
+                <div id="vertical-progress-bar">
+                    <div id="vertical-progress-value"></div>
+                </div>
+            <label>Y</label>
+            </div>
+    </div>
+    <div class="progress-container horizontal">
+        <label>X</label>
+        <div id="horizontal-progress-bar">
+            <div id="horizontal-progress-value"></div>
+            </div>
+        </div>
+    </div>
+    <div id="ui-container">
+        <div id="player-setup">
+            <h2>Játékosok beállítása</h2>
+            <div id="player-inputs">
+                <input type="text" placeholder="1. Játékos neve" value="Player 1">
+            </div>
+            <div class="setup-controls">
+                <button id="add-player">Játékos hozzáadása</button>
+                <div class="setup-option">
+                    <label for="game-mode-select">Játékmód:</label>
+                    <select id="game-mode-select">
+                        <option value="301">301</option>
+                        <option value="501" selected>501</option>
+                    </select>
+                </div>
+            </div>
+            <button id="start-game">Játék indítása</button>
+        </div>
+        <div id="scoreboard" style="display: none;">
+            <h2>Ponttábla</h2>
+            <div id="player-scores"></div>
+            <p>Aktuális játékos: <span id="current-player"></span></p>
+            <p>Hátralévő dobások: <span id="remaining-throws"></span></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
