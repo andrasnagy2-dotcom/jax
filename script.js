@@ -270,10 +270,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentPlayer.score -= points;
 
-        const isBust = currentPlayer.score < 0 || currentPlayer.score === 1;
-        const isWin = currentPlayer.score === 0 && type === 'double';
-
-        if (isWin) {
+        // 1. Győzelem ellenőrzése
+        if (currentPlayer.score === 0 && type === 'double') {
             updateScoreboard();
             setTimeout(() => {
                 alert(`${currentPlayer.name} nyert!`);
@@ -282,7 +280,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (isBust || (currentPlayer.score === 0 && type !== 'double')) {
+        // 2. Bust ellenőrzése
+        if (currentPlayer.score < 2 || (currentPlayer.score === 0 && type !== 'double')) {
             // Bust! Visszaállítjuk a pontszámot és a körnek vége.
             currentPlayer.score = originalScore;
             throwsLeft = 0;
@@ -340,11 +339,13 @@ document.addEventListener('DOMContentLoaded', () => {
         result.type = 'single';
 
         // Multiplikátorok
-        if (dist > boardRadius * 0.95 && dist <= boardRadius) { // Dupla
+        // Dupla gyűrű (a legkülső)
+        if (dist > boardRadius * 0.95 && dist <= boardRadius) {
             result.points = baseScore * 2;
             result.type = 'double';
         }
-        if (dist > boardRadius * 0.55 && dist <= boardRadius * 0.6) { // Tripla
+        // Tripla gyűrű
+        else if (dist > boardRadius * 0.55 && dist <= boardRadius * 0.6) {
             result.points = baseScore * 3;
             result.type = 'triple';
         }
