@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Központi Konfiguráció ---
     const boardConfig = {
         sectors: [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5],
-        baseRadiusFactor: 0.85, // A tábla sugara a vászon sugarához képest
+        baseRadiusFactor: 0.85,
         rings: {
             double:     { outer: 1.00, inner: 0.95, color: '#d22' },
             triple:     { outer: 0.60, inner: 0.55, color: '#d22' },
@@ -106,15 +106,14 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fill();
         }
 
-        // Gyűrűk (vonalakkal)
-        const ringWidth = baseRadius * 0.015;
-        ctx.lineWidth = ringWidth;
+        // Gyűrűk (széles, kitöltött)
         Object.values(boardConfig.rings).forEach(ring => {
-            if (ring === boardConfig.rings.doubleBull) return; // Ezt kitöltjük, nem vonallal rajzoljuk
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, baseRadius * ring.outer - ringWidth/2, 0, 2 * Math.PI);
-            ctx.strokeStyle = ring.color;
-            ctx.stroke();
+             if (ring === boardConfig.rings.bull || ring === boardConfig.rings.doubleBull) return;
+             ctx.beginPath();
+             ctx.arc(centerX, centerY, baseRadius * ring.outer, 0, 2 * Math.PI, false);
+             ctx.arc(centerX, centerY, baseRadius * ring.inner, 0, 2 * Math.PI, true);
+             ctx.fillStyle = ring.color;
+             ctx.fill();
         });
 
         // Bullseye (kitöltéssel)
@@ -160,14 +159,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function drawScorePopup() {
         if (!scorePopup) return;
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         ctx.font = 'bold 24px Arial';
         const textWidth = ctx.measureText(scorePopup.text).width;
-        ctx.fillRect(scorePopup.x - textWidth / 2 - 10, scorePopup.y - 30, textWidth + 20, 40);
+        const popupWidth = textWidth + 20;
+        const popupHeight = 40;
+
+        let x = scorePopup.x - popupWidth / 2;
+        let y = scorePopup.y - popupHeight - 15; // A nyíl fölé pozícionáljuk
+
+        // Dinamikus igazítás, hogy a vásznon belül maradjon
+        if (x < 5) x = 5;
+        if (x + popupWidth > canvas.width - 5) x = canvas.width - popupWidth - 5;
+        if (y < 5) y = 5;
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.fillRect(x, y, popupWidth, popupHeight);
+
         ctx.fillStyle = 'white';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(scorePopup.text, scorePopup.x, scorePopup.y - 10);
+        ctx.fillText(scorePopup.text, x + popupWidth / 2, y + popupHeight / 2);
     }
 
     // --- Játékmenet ---
@@ -230,9 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
             throwsLeft--;
         }
 
-        let popupY = y - 30;
-        if (popupY < 20) popupY = 20;
-        scorePopup = { text: popupText, x: x, y: popupY };
+        scorePopup = { text: popupText, x: x, y: y };
         setTimeout(() => scorePopup = null, isBust || !gameRunning ? 2000 : 1200);
 
         updateScoreboard();
