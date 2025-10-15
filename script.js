@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sectors: [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5],
         baseRadiusFactor: 0.85,
         rings: {
-            double:     { outer: 1.00, inner: 0.95, color: '#d22' },
-            triple:     { outer: 0.60, inner: 0.55, color: '#d22' },
+            double:     { outer: 1.00, inner: 0.95, color1: '#d22', color2: '#292' },
+            triple:     { outer: 0.60, inner: 0.55, color1: '#d22', color2: '#292' },
             bull:       { outer: 0.15, inner: 0.07, color: '#292' },
             doubleBull: { outer: 0.07, inner: 0.00, color: '#d22' }
         }
@@ -95,26 +95,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const baseRadius = (canvas.width / 2) * boardConfig.baseRadiusFactor;
         const textRadius = baseRadius + 20;
 
-        // Szektorok
+        // Szektorok és váltakozó színű gyűrűk
         for (let i = 0; i < 20; i++) {
             const angle = (i / 20) * Math.PI * 2 - (Math.PI / 20) - (Math.PI / 2);
+            const sectorColor = i % 2 === 0 ? '#000' : '#f0d9b5';
+            const ringColor = i % 2 === 0 ? boardConfig.rings.double.color1 : boardConfig.rings.double.color2;
+
+            // Fő szektor
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
             ctx.arc(centerX, centerY, baseRadius, angle, angle + Math.PI / 10);
             ctx.closePath();
-            ctx.fillStyle = i % 2 === 0 ? '#000' : '#f0d9b5';
+            ctx.fillStyle = sectorColor;
+            ctx.fill();
+
+            // Dupla gyűrű szegmens
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, baseRadius * boardConfig.rings.double.outer, angle, angle + Math.PI / 10);
+            ctx.arc(centerX, centerY, baseRadius * boardConfig.rings.double.inner, angle + Math.PI / 10, angle, true);
+            ctx.closePath();
+            ctx.fillStyle = ringColor;
+            ctx.fill();
+
+            // Tripla gyűrű szegmens
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, baseRadius * boardConfig.rings.triple.outer, angle, angle + Math.PI / 10);
+            ctx.arc(centerX, centerY, baseRadius * boardConfig.rings.triple.inner, angle + Math.PI / 10, angle, true);
+            ctx.closePath();
+            ctx.fillStyle = ringColor;
             ctx.fill();
         }
-
-        // Gyűrűk (széles, kitöltött)
-        Object.values(boardConfig.rings).forEach(ring => {
-             if (ring === boardConfig.rings.bull || ring === boardConfig.rings.doubleBull) return;
-             ctx.beginPath();
-             ctx.arc(centerX, centerY, baseRadius * ring.outer, 0, 2 * Math.PI, false);
-             ctx.arc(centerX, centerY, baseRadius * ring.inner, 0, 2 * Math.PI, true);
-             ctx.fillStyle = ring.color;
-             ctx.fill();
-        });
 
         // Bullseye (kitöltéssel)
         ctx.beginPath();
@@ -165,12 +177,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const popupHeight = 40;
 
         let x = scorePopup.x - popupWidth / 2;
-        let y = scorePopup.y - popupHeight - 15; // A nyíl fölé pozícionáljuk
+        let y = scorePopup.y - popupHeight - 15;
 
         // Dinamikus igazítás, hogy a vásznon belül maradjon
         if (x < 5) x = 5;
         if (x + popupWidth > canvas.width - 5) x = canvas.width - popupWidth - 5;
         if (y < 5) y = 5;
+        if (y + popupHeight > canvas.height - 5) y = canvas.height - popupHeight - 5;
 
         ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         ctx.fillRect(x, y, popupWidth, popupHeight);
