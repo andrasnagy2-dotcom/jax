@@ -17,52 +17,50 @@ body {
     gap: 20px;
 }
 
-#game-area {
-    display: flex;
-    align-items: center; /* Vertikális középre igazítás */
-    gap: 10px;
-}
-
-#canvas-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+#game-container {
+    position: relative; /* Kontextus az abszolút pozicionáláshoz */
+    width: 600px;
+    height: 600px;
+    margin: auto; /* Középre igazítás a flex konténeren belül */
 }
 
 canvas {
+    display: block; /* Eltávolítja az esetleges alsó margót */
     background-color: #333;
     border-radius: 50%;
 }
 
-.progress-container {
-    display: flex;
-    align-items: center;
-}
-
-/* --- Új Progress Bar Stílusok --- */
+/* --- Abszolút Pozicionált Progress Bar Stílusok --- */
 
 #horizontal-progress-bar {
-    width: 560px; /* Finomhangolt igazítás a tábla vizuális átmérőjéhez */
-    height: 15px;
-    position: relative;
-    border: 1px solid #fff; /* Keret hozzáadása */
+    position: absolute;
+    /* A szélességet a JavaScript állítja be a vászon alapján */
+    bottom: -25px; /* A vászon alá helyezés, hézaggal */
+    left: 50%;
+    transform: translateX(-50%); /* Vízszintes középre igazítás */
+    height: 20px;
+    border: 1px solid #fff;
+    box-sizing: border-box;
 }
 
 #horizontal-progress-value {
     background-color: red;
     height: 100%;
-    width: 3px; /* Vékony csík */
+    width: 3px;
     position: absolute;
     top: 0;
-    left: 0; /* JS fogja mozgatni */
+    left: 0;
 }
 
 #vertical-progress-bar {
-    width: 15px;
-    height: 560px; /* Finomhangolt igazítás a tábla vizuális átmérőjéhez */
-    position: relative;
-    border: 1px solid #fff; /* Keret hozzáadása */
+    position: absolute;
+    /* A magasságot a JavaScript állítja be a vászon alapján */
+    left: -25px; /* A vászontól balra helyezés, hézaggal */
+    top: 50%;
+    transform: translateY(-50%); /* Függőleges középre igazítás */
+    width: 20px;
+    border: 1px solid #fff;
+    box-sizing: border-box;
 }
 
 #vertical-progress-value {

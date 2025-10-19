@@ -2,7 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // DOM Elemek
     const canvas = document.getElementById('dartboard');
     const ctx = canvas.getContext('2d');
+    const verticalProgressBar = document.getElementById('vertical-progress-bar');
     const verticalProgressValue = document.getElementById('vertical-progress-value');
+    const horizontalProgressBar = document.getElementById('horizontal-progress-bar');
     const horizontalProgressValue = document.getElementById('horizontal-progress-value');
     const playerSetupDiv = document.getElementById('player-setup');
     const scoreboardDiv = document.getElementById('scoreboard');
@@ -26,6 +28,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let speed = 2;
     let thrownDarts = [];
     let scorePopup = null;
+
+    // --- Dinamikus Méretezés ---
+    function setProgressbarSizes() {
+        // A tábla valós, kirajzolt átmérőjének kiszámítása a számokkal együtt,
+        // hogy a progress bar-ok tökéletesen illeszkedjenek.
+        const baseRadius = (canvas.width / 2) * boardConfig.baseRadiusFactor;
+        const textRadius = baseRadius + 20; // A számok középpontjának sugara
+        const fontSize = baseRadius * 0.12; // A betűméret, ahogy a drawDartboard-ban van
+
+        // A teljes átmérő a számok külső széléig tart.
+        // Mivel a textBaseline 'middle', a betűmagasság felét kell hozzáadni.
+        const totalDiameter = (textRadius + (fontSize / 2)) * 2;
+
+        horizontalProgressBar.style.width = `${totalDiameter}px`;
+        verticalProgressBar.style.height = `${totalDiameter}px`;
+    }
 
     // --- Központi Konfiguráció ---
     const boardConfig = {
@@ -336,5 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Kezdeti beállítás
     document.addEventListener('keydown', handleKeyPress);
+    window.addEventListener('resize', setProgressbarSizes);
+    setProgressbarSizes(); // Első méretezés betöltéskor
     drawDartboard();
 });

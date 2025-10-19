@@ -8,21 +8,16 @@
 </head>
 <body>
 <div id="main-container">
-    <div id="game-area">
-        <!-- Wrapper a vászonnak és a vízszintes progress barnak -->
-        <div id="canvas-wrapper">
-            <canvas id="dartboard" width="600" height="600"></canvas>
-            <div class="progress-container horizontal">
-                <div id="horizontal-progress-bar">
-                    <div id="horizontal-progress-value"></div>
-                </div>
-            </div>
+    <!-- Ez a konténer fogja össze a játékteret a pozicionáláshoz -->
+    <div id="game-container">
+        <canvas id="dartboard" width="600" height="600"></canvas>
+
+        <!-- A progress bar-ok mostantól a vászonnal egy szinten vannak -->
+        <div id="horizontal-progress-bar">
+            <div id="horizontal-progress-value"></div>
         </div>
-        <!-- Függőleges progress bar a wrapper mellett -->
-        <div class="progress-container vertical">
-            <div id="vertical-progress-bar">
-                <div id="vertical-progress-value"></div>
-            </div>
+        <div id="vertical-progress-bar">
+            <div id="vertical-progress-value"></div>
         </div>
     </div>
     <div id="ui-container">
