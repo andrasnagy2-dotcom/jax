@@ -12,15 +12,22 @@ body {
 
 #main-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+    justify-content: center;
+    align-items: flex-start; /* Felső igazítás a UI panel miatt */
+    gap: 20px;
 }
 
 #game-area {
     display: flex;
+    align-items: center; /* Vertikális középre igazítás */
+    gap: 10px;
+}
+
+#canvas-wrapper {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
 }
 
 canvas {
@@ -31,56 +38,53 @@ canvas {
 .progress-container {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 1.2em;
-    font-weight: bold;
 }
 
-.progress-container.vertical {
-    flex-direction: column;
-}
-
-.progress-container.horizontal {
-    flex-direction: row;
-}
-
-#vertical-progress-bar {
-    width: 30px;
-    height: 600px;
-    border: 1px solid #fff;
-    position: relative;
-    order: -1; /* A label elé helyezi */
-}
-
-#vertical-progress-value {
-    background-color: red;
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-}
+/* --- Új Progress Bar Stílusok --- */
 
 #horizontal-progress-bar {
-    width: 600px;
-    height: 30px;
-    border: 1px solid #fff;
+    width: 560px; /* Finomhangolt igazítás a tábla vizuális átmérőjéhez */
+    height: 15px;
     position: relative;
+    border: 1px solid #fff; /* Keret hozzáadása */
 }
 
 #horizontal-progress-value {
     background-color: red;
     height: 100%;
+    width: 3px; /* Vékony csík */
     position: absolute;
-    left: 0;
+    top: 0;
+    left: 0; /* JS fogja mozgatni */
 }
 
-#ui-container {
+#vertical-progress-bar {
+    width: 15px;
+    height: 560px; /* Finomhangolt igazítás a tábla vizuális átmérőjéhez */
+    position: relative;
+    border: 1px solid #fff; /* Keret hozzáadása */
+}
+
+#vertical-progress-value {
+    background-color: red;
+    width: 100%;
+    height: 3px; /* Vékony csík */
     position: absolute;
-    top: 20px;
-    right: 20px;
+    left: 0;
+    bottom: 0; /* JS fogja mozgatni */
+}
+
+
+/* --- UI Panel --- */
+#ui-container {
+    position: relative; /* Nem abszolút, hogy a flexbox elrendezésben maradjon */
+    top: 0;
+    right: 0;
     background-color: rgba(51, 51, 51, 0.8);
     padding: 20px;
     border-radius: 10px;
     min-width: 250px;
+    max-width: 250px;
 }
 
 #player-setup h2, #scoreboard h2 {

@@ -152,20 +152,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function drawCrosshair() {
-        if (aimingState === 'done') return;
-        const x = (progressX / 100) * canvas.width;
-        const y = (1 - (progressY / 100)) * canvas.height;
-        ctx.strokeStyle = 'rgba(255, 0, 0, 0.7)';
-        ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        // A célkereszt a felhasználói kérés alapján el lett távolítva a nehézség növelése érdekében.
     }
 
     function drawDarts() {
+        const crossSize = 8; // A kereszt mérete
+        ctx.strokeStyle = '#39FF14'; // Neon zöld szín
+        ctx.lineWidth = 2;
+
         thrownDarts.forEach(dart => {
-            ctx.beginPath(); ctx.arc(dart.x, dart.y, 6, 0, 2 * Math.PI);
-            ctx.fillStyle = players[dart.playerIndex].color;
-            ctx.fill(); ctx.strokeStyle = 'black'; ctx.lineWidth = 2; ctx.stroke();
+            // Vízszintes vonal
+            ctx.beginPath();
+            ctx.moveTo(dart.x - crossSize, dart.y);
+            ctx.lineTo(dart.x + crossSize, dart.y);
+            ctx.stroke();
+
+            // Függőleges vonal
+            ctx.beginPath();
+            ctx.moveTo(dart.x, dart.y - crossSize);
+            ctx.lineTo(dart.x, dart.y + crossSize);
+            ctx.stroke();
         });
     }
 
@@ -204,12 +210,12 @@ document.addEventListener('DOMContentLoaded', () => {
             progressX += directionX * speed;
             if (progressX > 100 || progressX < 0) directionX *= -1;
             progressX = Math.max(0, Math.min(100, progressX));
-            horizontalProgressValue.style.width = `${progressX}%`;
+            horizontalProgressValue.style.left = `calc(${progressX}% - 1.5px)`;
         } else if (aimingState === 'y') {
             progressY += directionY * speed;
             if (progressY > 100 || progressY < 0) directionY *= -1;
             progressY = Math.max(0, Math.min(100, progressY));
-            verticalProgressValue.style.height = `${progressY}%`;
+            verticalProgressValue.style.bottom = `calc(${progressY}% - 1.5px)`;
         }
         drawCrosshair();
         drawScorePopup();

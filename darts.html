@@ -9,18 +9,19 @@
 <body>
 <div id="main-container">
     <div id="game-area">
-        <canvas id="dartboard" width="600" height="600"></canvas>
-        <div class="progress-container vertical">
-                <div id="vertical-progress-bar">
-                    <div id="vertical-progress-value"></div>
+        <!-- Wrapper a vászonnak és a vízszintes progress barnak -->
+        <div id="canvas-wrapper">
+            <canvas id="dartboard" width="600" height="600"></canvas>
+            <div class="progress-container horizontal">
+                <div id="horizontal-progress-bar">
+                    <div id="horizontal-progress-value"></div>
                 </div>
-            <label>Y</label>
             </div>
-    </div>
-    <div class="progress-container horizontal">
-        <label>X</label>
-        <div id="horizontal-progress-bar">
-            <div id="horizontal-progress-value"></div>
+        </div>
+        <!-- Függőleges progress bar a wrapper mellett -->
+        <div class="progress-container vertical">
+            <div id="vertical-progress-bar">
+                <div id="vertical-progress-value"></div>
             </div>
         </div>
     </div>
