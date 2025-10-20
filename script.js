@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameModeSelect = document.getElementById('game-mode-select');
     const remainingThrowsSpan = document.getElementById('remaining-throws');
     const muteButton = document.getElementById('mute-button');
+    const endGameScreen = document.getElementById('end-game-screen');
+    const winnerMessage = document.getElementById('winner-message');
+    const newGameButton = document.getElementById('new-game-button');
 
     // Játékállapot
     let players = [];
@@ -145,8 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     muteButton.addEventListener('click', () => {
-        // A böngészők korlátozzák az automatikus audio lejátszást.
-        // Az első felhasználói interakcióra (kattintás) kell elindítani/folytatni a kontextust.
         if (audioCtx.state === 'suspended') {
             audioCtx.resume();
         }
@@ -195,13 +196,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const baseRadius = (canvas.width / 2) * boardConfig.baseRadiusFactor;
         const textRadius = baseRadius + 20;
 
-        // Szektorok és váltakozó színű gyűrűk
         for (let i = 0; i < 20; i++) {
             const angle = (i / 20) * Math.PI * 2 - (Math.PI / 20) - (Math.PI / 2);
             const sectorColor = i % 2 === 0 ? '#000' : '#f0d9b5';
             const ringColor = i % 2 === 0 ? boardConfig.rings.double.color1 : boardConfig.rings.double.color2;
 
-            // Fő szektor
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
             ctx.arc(centerX, centerY, baseRadius, angle, angle + Math.PI / 10);
@@ -209,7 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fillStyle = sectorColor;
             ctx.fill();
 
-            // Dupla gyűrű szegmens
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
             ctx.arc(centerX, centerY, baseRadius * boardConfig.rings.double.outer, angle, angle + Math.PI / 10);
@@ -218,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fillStyle = ringColor;
             ctx.fill();
 
-            // Tripla gyűrű szegmens
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
             ctx.arc(centerX, centerY, baseRadius * boardConfig.rings.triple.outer, angle, angle + Math.PI / 10);
@@ -228,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fill();
         }
 
-        // Bullseye (kitöltéssel)
         ctx.beginPath();
         ctx.arc(centerX, centerY, baseRadius * boardConfig.rings.bull.outer, 0, 2 * Math.PI);
         ctx.fillStyle = boardConfig.rings.bull.color;
@@ -238,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = boardConfig.rings.doubleBull.color;
         ctx.fill();
 
-        // Számok
         ctx.fillStyle = 'white';
         ctx.font = `bold ${baseRadius * 0.12}px Arial`;
         ctx.textAlign = 'center';
@@ -251,23 +246,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function drawCrosshair() {
-        // A célkereszt a felhasználói kérés alapján el lett távolítva a nehézség növelése érdekében.
-    }
+    function drawCrosshair() {}
 
     function drawDarts() {
-        const crossSize = 8; // A kereszt mérete
-        ctx.strokeStyle = '#39FF14'; // Neon zöld szín
+        const crossSize = 8;
+        ctx.strokeStyle = '#39FF14';
         ctx.lineWidth = 2;
 
         thrownDarts.forEach(dart => {
-            // Vízszintes vonal
             ctx.beginPath();
             ctx.moveTo(dart.x - crossSize, dart.y);
             ctx.lineTo(dart.x + crossSize, dart.y);
             ctx.stroke();
 
-            // Függőleges vonal
             ctx.beginPath();
             ctx.moveTo(dart.x, dart.y - crossSize);
             ctx.lineTo(dart.x, dart.y + crossSize);
@@ -285,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let x = scorePopup.x - popupWidth / 2;
         let y = scorePopup.y - popupHeight - 15;
 
-        // Dinamikus igazítás, hogy a vásznon belül maradjon
         if (x < 5) x = 5;
         if (x + popupWidth > canvas.width - 5) x = canvas.width - popupWidth - 5;
         if (y < 5) y = 5;
@@ -339,7 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const { points, type } = getScore(x, y);
 
-        // Hang lejátszása a találat típusa alapján
         if (points === 50) {
             playSound('bullseye');
         } else if (type !== 'miss') {
@@ -377,8 +366,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateScoreboard();
 
-        if (!gameRunning) {
-            setTimeout(() => alert(`${currentPlayer.name} nyert!`), 100);
+        if (!gameRunning && currentPlayer.score === 0) {
+            winnerMessage.textContent = `${currentPlayer.name} nyert!`;
+            endGameScreen.style.display = 'flex';
             return;
         }
 
@@ -446,7 +436,28 @@ document.addEventListener('DOMContentLoaded', () => {
         updateScoreboard();
     }
 
+    function resetGame() {
+        endGameScreen.style.display = 'none';
+        scoreboardDiv.style.display = 'none';
+        playerSetupDiv.style.display = 'block';
+
+        // Játékállapot visszaállítása
+        players = [];
+        currentPlayerIndex = 0;
+        gameRunning = false;
+        thrownDarts = [];
+        playerInputsDiv.innerHTML = ''; // Játékos nevek törlése
+
+        // Adjunk hozzá egy alapértelmezett játékost
+        addPlayerButton.click();
+
+        // Tábla újrarajzolása
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawDartboard();
+    }
+
     // Kezdeti beállítás
+    newGameButton.addEventListener('click', resetGame);
     document.addEventListener('keydown', handleKeyPress);
     window.addEventListener('resize', setProgressbarSizes);
     setProgressbarSizes(); // Első méretezés betöltéskor
