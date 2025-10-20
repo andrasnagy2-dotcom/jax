@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const startGameButton = document.getElementById('start-game');
     const playerInputsDiv = document.getElementById('player-inputs');
     const playerScoresDiv = document.getElementById('player-scores');
-    const currentPlayerSpan = document.getElementById('current-player');
     const gameModeSelect = document.getElementById('game-mode-select');
     const remainingThrowsSpan = document.getElementById('remaining-throws');
+    const muteButton = document.getElementById('mute-button');
 
     // Játékállapot
     let players = [];
@@ -28,6 +28,81 @@ document.addEventListener('DOMContentLoaded', () => {
     let speed = 2;
     let thrownDarts = [];
     let scorePopup = null;
+    let isMuted = false;
+
+    // --- Audio Kezelés ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+        if (isMuted || !audioCtx) return;
+
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // Hangerő
+
+        switch (type) {
+            case 'single':
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.2);
+                break;
+            case 'double':
+                oscillator.type = 'triangle';
+                oscillator.frequency.setValueAtTime(660, audioCtx.currentTime); // E5
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.3);
+                // Második hang
+                setTimeout(() => playSound('single'), 100);
+                break;
+            case 'triple':
+                 oscillator.type = 'triangle';
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.4);
+                 // További hangok
+                setTimeout(() => playSound('single'), 100);
+                setTimeout(() => playSound('single'), 200);
+                break;
+            case 'bullseye':
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(523, audioCtx.currentTime); // C5
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.5);
+                break;
+            case 'miss':
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(110, audioCtx.currentTime); // A2
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.3);
+                break;
+            case 'win':
+                // Egyszerű dallam
+                playSoundNote(880, 0); playSoundNote(1046, 150); playSoundNote(1318, 300);
+                return; // A switch utáni start/stop nem kell
+            case 'bust':
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.5);
+                break;
+            default:
+                return; // Ismeretlen típus esetén ne csináljon semmit
+        }
+
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 1);
+    }
+
+    // Segédfüggvény a dallamokhoz
+    function playSoundNote(frequency, startTime) {
+        if (isMuted || !audioCtx) return;
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime + startTime / 1000);
+        gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + (startTime + 100) / 1000);
+        oscillator.start(audioCtx.currentTime + startTime / 1000);
+        oscillator.stop(audioCtx.currentTime + (startTime + 150) / 1000);
+    }
 
     // --- Dinamikus Méretezés ---
     function setProgressbarSizes() {
@@ -69,6 +144,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    muteButton.addEventListener('click', () => {
+        // A böngészők korlátozzák az automatikus audio lejátszást.
+        // Az első felhasználói interakcióra (kattintás) kell elindítani/folytatni a kontextust.
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        isMuted = !isMuted;
+        muteButton.textContent = isMuted ? 'Hang be' : 'Némítás';
+        muteButton.classList.toggle('muted', isMuted);
+    });
+
     startGameButton.addEventListener('click', () => {
         gameMode = parseInt(gameModeSelect.value, 10);
         const colors = ['#3498db', '#e74c3c', '#f1c40f', '#2ecc71'];
@@ -98,11 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             playerScoresDiv.appendChild(p);
         });
-        if (players[currentPlayerIndex]) {
-            const p = players[currentPlayerIndex];
-            currentPlayerSpan.textContent = p.name;
-            currentPlayerSpan.style.color = p.color;
-        }
         remainingThrowsSpan.textContent = throwsLeft;
     }
 
@@ -256,6 +338,16 @@ document.addEventListener('DOMContentLoaded', () => {
         thrownDarts.push({ x, y, playerIndex: currentPlayerIndex });
 
         const { points, type } = getScore(x, y);
+
+        // Hang lejátszása a találat típusa alapján
+        if (points === 50) {
+            playSound('bullseye');
+        } else if (type !== 'miss') {
+            playSound(type);
+        } else {
+            playSound('miss');
+        }
+
         const currentPlayer = players[currentPlayerIndex];
         const originalScore = currentPlayer.score;
         const newScore = originalScore - points;
@@ -267,10 +359,12 @@ document.addEventListener('DOMContentLoaded', () => {
             currentPlayer.score = 0;
             popupText = `WINNER!`;
             gameRunning = false;
+            playSound('win');
         } else if (newScore < 2 || (newScore === 0 && type !== 'double')) {
             isBust = true;
             popupText = `Bust! (${points}) - Dupla kell a végén!`;
             throwsLeft = 0;
+            playSound('bust');
         } else {
             currentPlayer.score = newScore;
             popupText = `${type.charAt(0).toUpperCase()}${type.slice(1)} ${points}`;

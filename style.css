@@ -146,3 +146,29 @@ button:hover {
 #scoreboard {
     text-align: left;
 }
+
+.scoreboard-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.scoreboard-footer p {
+    margin: 0;
+}
+
+#mute-button {
+    width: auto; /* Ne nyúljon szét */
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #777;
+}
+
+#mute-button:hover {
+    background-color: #999;
+}
+
+#mute-button.muted {
+    background-color: #c0392b;
+}
