@@ -1,0 +1,16 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+}
+
+#sidebar {
+    width: 200px;
+    padding: 20px;
+    background-color: #f0f0f0;
+}
+
+#canvas {
+    flex-grow: 1;
+    background-color: #ffffff;
+}

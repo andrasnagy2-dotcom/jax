@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gear Editor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="sidebar">
+        <h2>Controls</h2>
+        <label for="animate">Animate</label>
+        <input type="checkbox" id="animate" checked>
+        <br>
+        <label for="teeth">Teeth</label>
+        <input type="number" id="teeth" value="20">
+        <br>
+        <label for="diameter">Diameter</label>
+        <input type="number" id="diameter" value="100">
+        <br>
+        <button id="export-svg">Export SVG</button>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script src="script.js"></script>
+</body>
+</html>
